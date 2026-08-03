@@ -1,5 +1,5 @@
 <script setup>
-import Sample from './view/WeatherTwo.vue'
+import Sample from './view/WeatherC.vue'
 </script>
 
 <template>
