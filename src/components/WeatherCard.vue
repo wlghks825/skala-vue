@@ -52,7 +52,8 @@ const onDetailClick = () => {
     <!-- 추가: Fallback Content가 포함된 Action Slot - 부모 컴포넌트가 커스텀 버튼을 주입하지 않으면 기본 '상세보기' 버튼이 렌더링되고, 주입하면 부모의 버튼으로 대체되는 유연한 확장성 제공 -->
     <slot name="action">
       <!-- 추가: 이벤트 수식어(.stop)를 활용한 버블링 차단 - 버튼 클릭 시 부모 컨테이너(li)의 @click 이벤트까지 같이 터지는 현상을 완벽하게 방지 -->
-      <button class="detail-btn" @click.stop="onDetailClick">상세보기</button>
+      <!-- 추가: UI 라이브러리 활용 및 이벤트 버블링 차단 - 대시보드 표준 스타일에 맞추어 <el-button>을 적용하고, .stop 수식어를 유지하여 버튼 클릭 시 부모 컨테이너(li)의 이벤트가 의도치 않게 트리거되는 현상을 완벽히 방지함 -->
+      <el-button type="primary" class="detail-btn" @click.stop="onDetailClick">상세보기</el-button>
     </slot>
   </li>
 </template>

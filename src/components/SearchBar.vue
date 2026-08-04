@@ -18,11 +18,14 @@ const localQuery = computed({
 
 <template>
   <div class="search-container">
-    <input
-      type="text"
+    <!-- 추가: UI 프레임워크(Element Plus) 도입 - 
+     기본 <input> 태그를 <el-input> 컴포넌트로 교체하여 크로스 브라우징 환경에서 균일한 디자인을 보장하고,
+      clearable(원클릭 초기화 버튼) 속성을 추가-->
+    <el-input
       v-model.lazy.trim="localQuery"
       placeholder="검색할 도시 이름 입력"
-      class="search-input"
+      clearable
+      size="large"
     />
     <p class="search-status">
       검색 중인 도시: <strong>{{ props.query || '없음' }}</strong>
@@ -37,21 +40,7 @@ const localQuery = computed({
   gap: 8px;
 }
 
-.search-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 1rem;
-  box-sizing: border-box;
-  transition: all 0.2s;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
+/* 추가: CSS 다이어트 - Element Plus 컴포넌트가 자체적인 스타일링을 제공 */
 
 .search-status {
   margin: 0;
