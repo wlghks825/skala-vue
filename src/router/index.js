@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import WeatherHomeView from '../views/WeatherHomeViewDeploy.vue'
-import WeatherDetailView from '../views/WeatherDetailViewDeploy.vue' // 👈 새로 만든 상세 뷰 임포트
+import WeatherDetailView from '../views/WeatherDetailViewDeploy.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 
 const router = createRouter({

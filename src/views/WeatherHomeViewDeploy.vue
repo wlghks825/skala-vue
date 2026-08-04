@@ -5,6 +5,8 @@ import BaseDashboardCard from '../components/BaseDashboardCard.vue'
 import SearchBar from '../components/SearchBar.vue'
 import WeatherCard from '../components/WeatherCard.vue'
 import UnitToggler from '../components/UnitToggler.vue'
+
+// 추가: 로직 분리 (Composable 패턴) 적용 - 데이터 검색 및 필터링, API 통신 등의 비즈니스 로직을 컴포넌트 뷰(UI)와 완벽히 분리하여 코드 가독성과 재사용성을 높임
 import { useWeatherSearchDeploy } from '../composables/useWeatherSearchDeploy.js'
 
 const { searchQuery, filteredWeatherList, isLoading, loadWeatherData } = useWeatherSearchDeploy()
@@ -40,10 +42,12 @@ watch(
   { immediate: true },
 )
 
+// 추가: 디버깅 로직 (watch) - 상태 바 문구 등 반응형 변수의 변화를 감지하여 콘솔에 추적 로그를 남기는 실무형 디버깅 패턴 적용
 watch(statusMessage, (newVal) => {
   console.log(`[watch 감지] 상태 바 문구가 업데이트되었습니다 -> ${newVal}`)
 })
 
+// 추가: 디버깅 로직 (watchEffect) - 검색어 입력 시 관련 의존성을 자동으로 추적하여 상태를 모니터링
 watchEffect(() => {
   console.log(
     `[watchEffect 자동 호출] 현재 검색어 '${searchQuery.value}'에 매칭되는 API 데이터를 필터링합니다.`,
@@ -59,11 +63,13 @@ watchEffect(() => {
     </header>
 
     <BaseDashboardCard>
+      <!-- 추가: Named Slot 적용 - BaseDashboardCard 내부의 특정 위치(#header)에 부모의 콘텐츠를 유연하게 주입 -->
       <template #header> 도시 검색 </template>
       <search-bar :query="searchQuery" @update-query="handleUpdateQuery" />
     </BaseDashboardCard>
 
     <BaseDashboardCard>
+      <!-- 추가: Named Slot 적용 -->
       <template #header> 지역별 날씨 현황 </template>
 
       <div v-if="isLoading" class="loading-state">
@@ -71,6 +77,7 @@ watchEffect(() => {
       </div>
 
       <ul v-else-if="filteredWeatherList.length > 0">
+        <!-- 추가: 렌더링 최적화 (v-memo) - 온도와 상태 값이 변경되지 않은 카드는 불필요하게 리렌더링하지 않도록 성능 최적화 -->
         <weather-card
           v-for="weather in filteredWeatherList"
           :key="weather.id"
@@ -78,6 +85,7 @@ watchEffect(() => {
           v-memo="[weather.temp, weather.status]"
           @select-card="handleSelectCard"
         >
+          <!-- 추가: Action Slot 적용 - WeatherCard 내부에 슬롯을 뚫어 상세 보기 버튼의 디자인과 클릭 이벤트(Router 이동)를 부모 컴포넌트가 제어하도록 확장성 부여 -->
           <template #action>
             <button class="custom-detail-btn" @click.stop="handleClickDetail(weather.id)">
               상세보기 🔍
@@ -90,6 +98,7 @@ watchEffect(() => {
         <p>해당 도시의 날씨 정보가 없습니다.</p>
       </div>
 
+      <!-- 추가: Named Slot 적용 -->
       <template #footer> 검색된 도시 수: {{ filteredWeatherList.length }}개 </template>
     </BaseDashboardCard>
 

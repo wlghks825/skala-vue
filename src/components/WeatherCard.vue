@@ -11,6 +11,8 @@ const props = defineProps({
 
 const emit = defineEmits(['select-card', 'click-detail'])
 const configStore = useConfigStore()
+
+// 추가: 전역 상태 기반 반응형 데이터 가공 (computed) - Store의 단위(unit) 상태를 실시간으로 구독하여 원본 데이터를 훼손하지 않고 화면 출력용 온도만 동적으로 변환
 const displayTemp = computed(() => {
   const rawTemp = props.weather.temp
   if (configStore.unit === 'fahrenheit') {
@@ -18,6 +20,7 @@ const displayTemp = computed(() => {
   }
   return rawTemp
 })
+
 const onCardClick = () => {
   emit('select-card', props.weather.name)
 }
@@ -40,12 +43,15 @@ const onDetailClick = () => {
       </h4>
       <p class="temp">현재 기온: {{ displayTemp }}{{ configStore.unitSymbol }}</p>
 
+      <!-- 추가: 원본 데이터 기반의 다중 조건부 렌더링 - 화면에 출력되는 변환 온도(displayTemp)가 아닌 절대적인 원본 섭씨 데이터(props.weather.temp)를 기준으로 조건을 평가하여, 사용자가 단위를 화씨로 변경하더라도 뱃지 로직이 무너지지 않도록 견고하게 설계 -->
       <span v-if="props.weather.temp >= 28" class="badge hot">🔥 더움</span>
       <span v-else-if="props.weather.temp >= 20" class="badge normal">⛅ 보통</span>
       <span v-else class="badge cool">❄️ 선선함</span>
     </div>
 
+    <!-- 추가: Fallback Content가 포함된 Action Slot - 부모 컴포넌트가 커스텀 버튼을 주입하지 않으면 기본 '상세보기' 버튼이 렌더링되고, 주입하면 부모의 버튼으로 대체되는 유연한 확장성 제공 -->
     <slot name="action">
+      <!-- 추가: 이벤트 수식어(.stop)를 활용한 버블링 차단 - 버튼 클릭 시 부모 컨테이너(li)의 @click 이벤트까지 같이 터지는 현상을 완벽하게 방지 -->
       <button class="detail-btn" @click.stop="onDetailClick">상세보기</button>
     </slot>
   </li>
