@@ -37,14 +37,25 @@ export function useWeatherSearchDeploy() {
       const results = await Promise.all(promises)
 
       // 추가: 데이터 정제 (Data Mapping) - 외부 API의 복잡한 원본 응답 데이터를 프론트엔드 UI(WeatherCard)에서 사용하기 편한 규격화된 객체 형태로 가공하여 결합도를 낮춤
-      weatherList.value = results.map((data) => ({
-        id: data.id,
-        name: data.name,
-        cityName: data.name,
-        temp: Math.round(data.main.temp),
-        status: data.weather[0].description,
-        icon: data.weather[0].icon,
-      }))
+      // 추가: 데이터 정제 및 시계열 변화량(Mock) 생성
+      weatherList.value = results.map((data) => {
+        // 기존에 바로 넣던 값을 currentTemp라는 변수로 먼저 빼냅니다.
+        const currentTemp = Math.round(data.main.temp)
+
+        // 추가: 시계열 추세 시각화를 위한 가상의 '어제 기온' 생성 (-4도 ~ +4도 사이 랜덤 증감)
+        const randomDiff = Math.floor(Math.random() * 9) - 4
+        const yesterdayTemp = currentTemp - randomDiff
+
+        return {
+          id: data.id,
+          name: data.name,
+          cityName: data.name,
+          temp: currentTemp,
+          yesterdayTemp: yesterdayTemp,
+          status: data.weather[0].description,
+          icon: data.weather[0].icon,
+        }
+      })
       // 추가: 상태 영구 저장 (Local Storage) - API 호출이 성공하여 데이터가 가공된 직후, 브라우저 스토리지에 도시 리스트를 캐싱하여 새로고침 시에도 사용자 컨텍스트를 유지함
       const cityNames = weatherList.value.map((w) => w.cityName)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(cityNames))
@@ -83,7 +94,7 @@ export function useWeatherSearchDeploy() {
     // 추가: 방어적 필터링 (trim) - 사용자가 실수로 공백을 입력해도 정상적으로 전체 리스트를 반환하도록 예외 처리
 
     let list = weatherList.value
-    if (!searchQuery.value.trim()) {
+    if (searchQuery.value.trim()) {
       list = list.filter((item) =>
         item.cityName.toLowerCase().includes(searchQuery.value.toLowerCase()),
       )

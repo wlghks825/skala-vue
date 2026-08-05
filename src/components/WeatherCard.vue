@@ -32,6 +32,21 @@ const onCardClick = () => {
 const onDetailClick = () => {
   emit('click-detail', props.weather.name, props.weather.status)
 }
+
+// 추가: 시계열 데이터 증감 계산
+const tempTrend = computed(() => {
+  if (props.weather.yesterdayTemp === undefined) return null
+
+  const diff = props.weather.temp - props.weather.yesterdayTemp
+
+  if (diff > 0) {
+    return { text: `▲ +${diff}`, class: 'text-red' } // 상승: 빨간색
+  } else if (diff < 0) {
+    return { text: `▼ ${diff}`, class: 'text-blue' } // 하락: 파란색 (- 기호는 diff 자체에 포함됨)
+  } else {
+    return { text: `- 0`, class: 'text-gray' } // 동일: 회색
+  }
+})
 </script>
 
 <template>
@@ -57,6 +72,22 @@ const onDetailClick = () => {
         </span>
       </h4>
       <p class="temp">현재 기온: {{ displayTemp }}{{ configStore.unitSymbol }}</p>
+
+      <!-- 추가: 변화 추세 뱃지 렌더링 -->
+      <span
+        v-if="tempTrend"
+        :class="tempTrend.class"
+        style="
+          margin-left: 10px;
+          font-size: 0.9em;
+          font-weight: bold;
+          background: rgba(0, 0, 0, 0.05);
+          padding: 2px 6px;
+          border-radius: 4px;
+        "
+      >
+        어제보다 {{ tempTrend.text }}{{ configStore.unitSymbol }}
+      </span>
 
       <!-- 추가: 원본 데이터 기반의 다중 조건부 렌더링 - 화면에 출력되는 변환 온도(displayTemp)가 아닌 절대적인 원본 섭씨 데이터(props.weather.temp)를 기준으로 조건을 평가하여, 사용자가 단위를 화씨로 변경하더라도 뱃지 로직이 무너지지 않도록 견고하게 설계 -->
       <span v-if="props.weather.temp >= 33" class="badge hot">🔥 폭염</span>
