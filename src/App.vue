@@ -5,8 +5,9 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   <div style="padding: 20px">
     <nav class="nav-bar">
-      <RouterLink to="/">Home</RouterLink> |
-      <RouterLink to="/about">About</RouterLink>
+      <RouterLink to="/">Home</RouterLink> | <RouterLink to="/about">About</RouterLink> |
+      <!-- 추가: 글로벌 네비게이션 바(GNB) 확장 - 예측 대시보드로 즉시 진입할 수 있는 최상위 메뉴 배치 -->
+      <RouterLink to="/forecast">Forecast (예측 차트)</RouterLink>
     </nav>
     <RouterView />
   </div>

@@ -25,3 +25,15 @@ export const fetchWeatherByCity = async (cityName) => {
     throw error
   }
 }
+
+export const fetchForecastByCity = async (cityName) => {
+  try {
+    const response = await weatherApi.get('/forecast', {
+      params: { q: cityName },
+    })
+    return response.data
+  } catch (error) {
+    console.error(`Failed to fetch forecast for ${cityName}:`, error)
+    throw error
+  }
+}
