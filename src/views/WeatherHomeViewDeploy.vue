@@ -27,7 +27,7 @@ const handleClickDetail = (id) => {
 }
 
 onMounted(() => {
-  loadWeatherData(['Seoul', 'Busan', 'Incheon', 'Jeju'])
+  loadWeatherData()
 })
 
 watch(
