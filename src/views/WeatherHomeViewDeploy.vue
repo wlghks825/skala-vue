@@ -1,3 +1,23 @@
+<!-- 
+==============================================
+ * [최종 배포용 파일] WeatherHomeViewDeploy.vue
+ * 
+ * 💡 컴포넌트 역할: 애플리케이션의 메인 대시보드 화면. 하위 UI 컴포넌트들(SearchBar, WeatherCard 등)을 조립하고, 분리된 비즈니스 로직(Composable)을 연결하여 최종적인 사용자 경험을 제공하는 최상위 컨테이너.
+ * 
+ * 📊 주요 상태(Variables) 정리
+ * - searchQuery, filteredWeatherList, isLoading, favoriteCities: 비즈니스 로직(useWeatherSearchDeploy)에서 가져온 반응형 상태값들.
+ * - router: vue-router의 useRouter() 인스턴스. 상세보기 페이지 이동 처리에 사용됨.
+ * - statusMessage (Ref): 하단 상태 바에 출력될 안내 문구. 검색 및 카드 클릭 상태에 따라 동적으로 변경됨.
+ * 
+ * 🛠 주요 함수(Functions) & 훅(Hooks) 정리
+ * - loadWeatherData(), toggleFavorite(): Composable에서 가져온 핵심 액션 함수들.
+ * - handleUpdateQuery(newQuery): 검색창 컴포넌트(SearchBar)에서 발생한 이벤트를 받아 검색어를 업데이트함.
+ * - handleSelectCard(cityName): 개별 날씨 카드 클릭 시 상태 바 문구를 변경하는 핸들러.
+ * - handleClickDetail(id): 카드 내 상세보기 버튼 클릭 시 동적 라우팅(/weather/:id)을 통해 상세 페이지로 화면을 이동시킴.
+ * - onMounted(): 컴포넌트가 마운트될 때 즉시 API 데이터를 불러오도록 트리거함.
+ * - watch & watchEffect: 상태 변화를 실시간으로 추적하여 상태 바 문구를 자동 업데이트하거나, 실무형 디버깅 로그를 콘솔에 남김.
+============================================== 
+-->
 <script setup>
 import { ref, watch, watchEffect, onMounted } from 'vue'
 import { useRouter } from 'vue-router'

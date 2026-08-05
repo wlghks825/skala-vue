@@ -1,3 +1,16 @@
+<!-- 
+==============================================
+ * [최종 배포용 파일] NotFoundView.vue
+ * 
+ * 💡 컴포넌트 역할: 사용자가 존재하지 않는 잘못된 URL 경로로 접근했을 때(Catch-all 라우팅) 표시되는 404 에러 안내 페이지(Fallback UI).
+ * 
+ * 📊 주요 상태(Variables) 정리
+ * - router: vue-router의 useRouter() 인스턴스. 페이지 이동(Navigation)을 프로그래밍 방식으로 제어하기 위해 사용함.
+ * 
+ * 🛠 주요 함수(Functions) 정리
+ * - handleGoHome(): '메인 대시보드로 돌아가기' 버튼 클릭 시 호출되며, router.push('/')를 통해 사용자를 안전하게 최상위 루트(홈 화면)로 복귀시킴.
+============================================== 
+-->
 <script setup>
 import { useRouter } from 'vue-router'
 

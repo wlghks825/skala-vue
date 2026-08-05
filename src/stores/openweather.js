@@ -1,3 +1,18 @@
+/* 
+==============================================
+ * [최종 배포용 파일] openweather.js
+ * 
+ * 💡 파일 역할: 외부 OpenWeather API와의 비동기 HTTP 통신을 전담하고, 프론트엔드 UI 컴포넌트 및 차트 라이브러리에서 사용하기 편리한 형태로 데이터를 정제(Data Mapping)하는 서비스 계층(Service Layer) 모듈.
+ * 
+ * 📊 주요 상수(Variables & Constants) 정리
+ * - API_KEY: 환경변수(.env)에서 안전하게 주입받은 API 인증 키 (소스코드 내 하드코딩 방지 및 보안 강화).
+ * - weatherApi: 커스텀 Axios 인스턴스. baseURL과 공통 파라미터(appid, metric 단위, 한국어 언어팩)를 전역 설정하여 API 호출 시 발생하는 중복 코드를 원천 차단함.
+ * 
+ * 🛠 주요 함수(Functions) & 핵심 로직 정리
+ * - fetchWeatherByCity(cityName): 특정 도시의 '현재 날씨' 단건 데이터를 비동기로 요청함. 실패 시 단순 로그에 그치지 않고 호출부(Composable)로 에러를 전파(throw)하여 로딩 상태 종료 및 실패 UI 처리를 위임함.
+ * - fetchForecastByCity(cityName): 특정 도시의 '5일/3시간 간격 예보' 데이터를 요청함. 복잡한 원본 응답 배열(list)을 순회하며, 차트 렌더링에 필요한 핵심 지표(시간, 온도 반올림, 강수 확률, 강수량)만 추출해 `mappedList`로 규격화하는 강력한 데이터 정제 로직을 포함함.
+============================================== 
+*/
 import axios from 'axios'
 
 // 추가: 환경변수(Environment Variable) 활용 - 보안상 민감한 API Key를 소스코드에 직접 하드코딩하지 않고 런타임 환경변수(.env)로 분리하여 보안 사고를 예방하고 배포 안정성을 높임

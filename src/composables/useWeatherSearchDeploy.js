@@ -1,3 +1,25 @@
+/* 
+==============================================
+ * [최종 배포용 파일] useWeatherSearchDeploy.js
+ * 
+ * 💡 컴포넌트 역할: 날씨 데이터 검색, 필터링, API 호출, 즐겨찾기 상태 및 로컬 스토리지 동기화 등 핵심 비즈니스 로직을 캡슐화하여 분리한 Vue Composable(커스텀 훅).
+ * 
+ * 📊 주요 상태(Variables) 정리
+ * - searchQuery (Ref): 사용자가 입력한 도시 검색어 상태.
+ * - weatherList (Ref): API를 통해 성공적으로 불러와 정제(Mapping)된 날씨 데이터 원본 배열.
+ * - isLoading (Ref): API 통신 중임을 나타내는 로딩 상태 값 (무한 로딩 방지용).
+ * - STORAGE_KEY (String): 최근 검색/조회된 도시 리스트를 로컬 스토리지에 저장하기 위한 상수 식별자.
+ * - FAVORITE_KEY (String): 즐겨찾기(⭐) 된 도시 리스트를 로컬 스토리지에 저장하기 위한 상수 식별자.
+ * - favoriteCities (Ref): 로컬 스토리지와 실시간으로 동기화되어 유지되는 즐겨찾기 도시 배열.
+ * - filteredWeatherList (Computed): 검색어(trim 예외처리 적용)에 따라 리스트를 1차 필터링하고, 즐겨찾기 된 도시가 최상단에 오도록 2차 내림차순 정렬을 수행한 최종 렌더링용 배열.
+ * 
+ * 🛠 주요 함수(Functions) 정리
+ * - toggleFavorite(cityName): 특정 도시를 즐겨찾기 배열에 추가/제거하고 로컬 스토리지에 즉시 덮어씌워 영구 저장함.
+ * - getSavedCities(): 로컬 스토리지에서 기존 캐싱된 도시 목록을 불러오며, 최초 접속 시 기본 6개 도시 배열을 반환함.
+ * - loadWeatherData(cities): 비동기 병렬 처리(Promise.all)를 통해 네트워크 대기 시간을 최소화하며 날씨 데이터를 요청하고, UI 렌더링에 적합한 형태로 데이터를 정제(가상 시계열 데이터 포함)함.
+ * - checkTemperatureAlerts(list): 설비 이상 탐지(Anomaly Detection)를 응용한 로직. 기온이 임계치(33도 이상 폭염, -10도 이하 한파)를 초과하면 화면에 즉각적인 경보 알림(ElNotification)을 발생시킴.
+============================================== 
+*/
 import { ref, computed } from 'vue'
 import { fetchWeatherByCity } from '@/stores/openweather'
 import { ElNotification } from 'element-plus'

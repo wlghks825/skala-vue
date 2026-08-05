@@ -1,3 +1,22 @@
+<!-- 
+==============================================
+ * [최종 배포용 파일] WeatherDetailViewDeploy.vue
+ * 
+ * 💡 컴포넌트 역할: 사용자가 선택한 특정 도시의 상세 기상 관측 정보(상태, 온도, 습도, 풍속 등)를 렌더링하는 상세 페이지.
+ * 
+ * 📊 주요 상태(Variables) 정리
+ * - route: vue-router의 useRoute() 인스턴스. 현재 URL 경로에서 동적 파라미터(cityId)를 추출하여 API 호출 식별자로 사용함.
+ * - router: vue-router의 useRouter() 인스턴스. 메인 화면으로 복귀하는 프로그래밍 방식의 네비게이션 제어.
+ * - configStore: 온도 단위 설정(℃/℉) 상태를 참조하기 위한 전역 Pinia 스토어.
+ * - weatherInfo (Ref): API 통신을 통해 받아온 원본 데이터를 화면 UI에 맞게 가공(정제)하여 저장하는 객체.
+ * - isLoading (Ref): 데이터 패칭(Fetching)이 진행 중임을 나타내는 상태 값으로, 사용자에게 로딩 스피너(또는 메시지)를 보여주기 위해 사용됨.
+ * - displayTemp (Computed): 전역 설정 단위(unit)에 맞춰 원본 기온 데이터를 섭씨 또는 화씨로 자동 변환하여 반환함.
+ * 
+ * 🛠 주요 함수(Functions) & 생명주기(Hooks) 정리
+ * - onMounted(): 컴포넌트가 DOM에 마운트되자마자 실행되는 훅. 추출한 cityId를 기반으로 단건 API 통신을 수행하며, try-catch-finally 블록을 통해 성공/실패/종료 상태를 안전하게 핸들링함.
+ * - handleGoBack(): '목록으로 돌아가기' 버튼 클릭 시 메인 대시보드('/') 라우트로 즉시 이동시킴.
+============================================== 
+-->
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

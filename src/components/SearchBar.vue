@@ -1,3 +1,17 @@
+<!-- 
+==============================================
+ * [최종 배포용 파일] SearchBar.vue
+ * 
+ * 💡 컴포넌트 역할: 사용자의 텍스트 입력을 받아 검색어를 부모 컴포넌트로 전달하는 검색창 UI.
+ * 
+ * 📊 주요 상태(Props & Variables) 정리
+ * - props.query (String): 부모 컴포넌트(대시보드)로부터 주입받은 현재 검색어 상태 값.
+ * - localQuery (Computed): <el-input>과 안전하게 양방향 바인딩(v-model)을 하기 위한 계산된 속성. 값을 읽을 때는 props.query를 반환하고, 값이 입력(수정)될 때는 setter를 통해 이벤트를 발생시킴.
+ * 
+ * 🛠 주요 이벤트(Emits & Functions) 정리
+ * - emit('update-query', newValue): 사용자가 새로운 텍스트를 입력하거나 지웠을 때, 부모 컴포넌트에게 새로운 검색어(newValue) 상태로 업데이트해 달라고 요청하는 커스텀 이벤트.
+============================================== 
+-->
 <script setup>
 import { computed } from 'vue'
 

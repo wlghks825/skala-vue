@@ -1,3 +1,22 @@
+<!-- 
+==============================================
+ * [최종 배포용 파일] WeatherCard.vue
+ * 
+ * 💡 컴포넌트 역할: 개별 도시의 날씨 정보(온도, 상태, 전일 대비 증감)를 시각적인 카드 형태로 렌더링하고, 사용자 상호작용(클릭, 즐겨찾기)을 처리하는 재사용 가능한 UI 모듈.
+ * 
+ * 📊 주요 상태(Props & Variables) 정리
+ * - props.weather (Object): 부모로부터 전달받은 단일 도시의 날씨 데이터 객체 (이름, 온도, 상태, 어제 온도 등 포함).
+ * - props.isFavorite (Boolean): 현재 도시가 즐겨찾기로 등록되어 있는지 여부.
+ * - configStore: 전역 설정 스토어(온도 단위 등).
+ * - displayTemp (Computed): Store의 단위(celsius/fahrenheit) 상태를 실시간으로 구독하여, 원본 데이터를 훼손하지 않고 화면 출력용 온도로 동적 변환한 값.
+ * - tempTrend (Computed): 원본 섭씨 데이터를 기준으로 어제와의 온도 차이를 계산하여 상승/하락 폭과 그에 맞는 CSS 클래스(색상)를 반환하는 객체.
+ * 
+ * 🛠 주요 이벤트(Emits & Functions) 정리
+ * - onCardClick(): 카드 영역 전체 클릭 시 'select-card' 이벤트를 부모로 발생시켜 도시 이름을 전달함.
+ * - onDetailClick(): 상세보기 버튼 클릭 시 'click-detail' 이벤트를 발생시키며, 부모 요소를 클릭한 것으로 간주되지 않도록 이벤트 버블링(.stop)을 차단함.
+ * - $emit('toggle-fav'): 별(⭐) 아이콘 클릭 시 해당 도시를 즐겨찾기에 추가/제거해 달라고 부모에게 요청함 (역시 버블링 차단 적용).
+============================================== 
+-->
 <script setup>
 import { computed } from 'vue'
 import { useConfigStore } from '../stores/configStore'
@@ -62,7 +81,7 @@ const tempTrend = computed(() => {
       >
         <span>{{ props.weather.name }} ({{ props.weather.status }})</span>
 
-        <!-- ⭐ 즐겨찾기 토글 버튼: 부모 컴포넌트(WeatherHomeViewDeploy)로 이벤트를 쏘아 올림 -->
+        <!-- 추가: ⭐ 즐겨찾기 토글 버튼, 부모 컴포넌트(WeatherHomeViewDeploy)로 이벤트를 쏘아 올림 -->
         <span
           style="cursor: pointer; font-size: 1.2rem"
           @click.stop="$emit('toggle-fav', props.weather.cityName)"
