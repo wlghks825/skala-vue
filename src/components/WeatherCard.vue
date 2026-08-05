@@ -7,9 +7,14 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isFavorite: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['select-card', 'click-detail'])
+// 추가: 부모에게 별 클릭 이벤트를 알리기 위한 emit 정의
+const emit = defineEmits(['select-card', 'click-detail', 'toggle-fav'])
 const configStore = useConfigStore()
 
 // 추가: 전역 상태 기반 반응형 데이터 가공 (computed) - Store의 단위(unit) 상태를 실시간으로 구독하여 원본 데이터를 훼손하지 않고 화면 출력용 온도만 동적으로 변환
@@ -38,8 +43,18 @@ const onDetailClick = () => {
           'text-blue': props.weather.status === '비',
           'text-gray': props.weather.status === '구름',
         }"
+        style="display: flex; align-items: center; justify-content: space-between"
       >
-        {{ props.weather.name }} ({{ props.weather.status }})
+        <span>{{ props.weather.name }} ({{ props.weather.status }})</span>
+
+        <!-- ⭐ 즐겨찾기 토글 버튼: 부모 컴포넌트(WeatherHomeViewDeploy)로 이벤트를 쏘아 올림 -->
+        <span
+          style="cursor: pointer; font-size: 1.2rem"
+          @click.stop="$emit('toggle-fav', props.weather.cityName)"
+        >
+          <!-- props로 즐겨찾기 여부를 받아서 빈 별/채워진 별 표시 -->
+          {{ props.isFavorite ? '⭐' : '☆' }}
+        </span>
       </h4>
       <p class="temp">현재 기온: {{ displayTemp }}{{ configStore.unitSymbol }}</p>
 

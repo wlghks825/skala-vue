@@ -10,9 +10,22 @@ export function useWeatherSearchDeploy() {
 
   // 추가: 로컬 스토리지 Key 정의 - 전역 상수화하여 오타로 인한 버그 방지
   const STORAGE_KEY = 'weather_recent_cities'
+
+  // 추가: 즐겨찾기 저장용 Key 추가, 상태관리, 토글
+  const FAVORITE_KEY = 'weather_favorite_cities'
+  const favoriteCities = ref(JSON.parse(localStorage.getItem(FAVORITE_KEY)) || [])
+  const toggleFavorite = (cityName) => {
+    if (favoriteCities.value.includes(cityName)) {
+      favoriteCities.value = favoriteCities.value.filter((name) => name !== cityName)
+    } else {
+      favoriteCities.value.push(cityName)
+    }
+    localStorage.setItem(FAVORITE_KEY, JSON.stringify(favoriteCities.value))
+  }
+
   const getSavedCities = () => {
     const saved = localStorage.getItem(STORAGE_KEY)
-    // 저장된 내역이 있으면 파싱해서 쓰고, 없으면 기본 4개 도시 반환
+    // 저장된 내역이 있으면 파싱해서 쓰고, 없으면 기본 6개 도시 반환
     return saved ? JSON.parse(saved) : ['Seoul', 'Busan', 'Incheon', 'Jeju', 'Riyadh', 'McMurdo']
   }
 
@@ -68,12 +81,22 @@ export function useWeatherSearchDeploy() {
 
   const filteredWeatherList = computed(() => {
     // 추가: 방어적 필터링 (trim) - 사용자가 실수로 공백을 입력해도 정상적으로 전체 리스트를 반환하도록 예외 처리
-    if (!searchQuery.value.trim()) return weatherList.value
 
-    // 추가: 검색 UX 강화 (toLowerCase) - 영문 도시명 검색 시 대소문자를 엄격하게 구분하지 않고 일치하는 항목을 찾아주어 사용자 편의성 향상
-    return weatherList.value.filter((item) =>
-      item.cityName.toLowerCase().includes(searchQuery.value.toLowerCase()),
-    )
+    let list = weatherList.value
+    if (!searchQuery.value.trim()) {
+      list = list.filter((item) =>
+        item.cityName.toLowerCase().includes(searchQuery.value.toLowerCase()),
+      )
+    }
+
+    // 추가: 즐겨찾기 정렬 로직 - 원본 데이터 변형(Mutation)을 막기 위해 스프레드 연산자([...list])로 복사본을 만든 후 정렬(sort) 실행.
+    return [...list].sort((a, b) => {
+      const isAFav = favoriteCities.value.includes(a.cityName) ? 1 : 0
+      const isBFav = favoriteCities.value.includes(b.cityName) ? 1 : 0
+
+      // 추가:내림차순 정렬
+      return isBFav - isAFav
+    })
   })
 
   return {
@@ -82,5 +105,7 @@ export function useWeatherSearchDeploy() {
     filteredWeatherList,
     isLoading,
     loadWeatherData,
+    favoriteCities,
+    toggleFavorite,
   }
 }
