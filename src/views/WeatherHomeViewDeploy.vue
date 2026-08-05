@@ -65,7 +65,7 @@ watchEffect(() => {
 <template>
   <div class="practice-section">
     <header class="app-header">
-      <h2>⛅ 종합실습 5: 스토어적용</h2>
+      <h2>⛅ 종합실습</h2>
       <UnitToggler />
     </header>
 
