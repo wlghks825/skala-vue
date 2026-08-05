@@ -31,7 +31,26 @@ export const fetchForecastByCity = async (cityName) => {
     const response = await weatherApi.get('/forecast', {
       params: { q: cityName },
     })
-    return response.data
+
+    // 추가: 데이터 정제 (Data Mapping)
+    // 차트 라이브러리(막대형, 꺾은선형)에 데이터를 바로 밀어 넣을 수 있도록, 복잡한 원본 응답에서 필요한 시계열 지표만 추출하여 규격화합니다.
+    const mappedList = response.data.list.map((item) => ({
+      time: item.dt_txt,
+      temp: Math.round(item.main.temp),
+      precipitationProb: Math.round(item.pop * 100),
+      // 강수량(rain) 객체가 아예 없거나 '3h' 속성이 없을 경우를 완벽하게 방어하기 위한 옵셔널 체이닝/조건부 처리
+      rainVolume: item.rain && item.rain['3h'] ? item.rain['3h'] : 0,
+
+      icon: item.weather[0].icon,
+      status: item.weather[0].description,
+    }))
+
+    // 기존 UI 컴포넌트가 고장 나지 않도록 원본 객체 구조는 유지하되,
+    // 복잡했던 원본 list 배열만 우리가 깔끔하게 가공한 mappedList로 교체(Overriding)해서 던져줍니다.
+    return {
+      ...response.data,
+      list: mappedList,
+    }
   } catch (error) {
     console.error(`Failed to fetch forecast for ${cityName}:`, error)
     throw error
